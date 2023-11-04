@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -15,9 +15,9 @@ contract BBNFT is ERC721, Ownable {
     mapping(address => uint256) public walletMints;
 
     constructor() payable ERC721("BBNFT", "BB") {
-        mintPrice = 0.01 ether;
+        mintPrice = 0.00001 ether;
         totalSupply = 0;
-        maxSupply = 1000;
+        maxSupply = 100;
         maxPerWallet = 3;
     }
 
@@ -64,15 +64,15 @@ contract BBNFT is ERC721, Ownable {
         require(totalSupply + quantity_ <= maxSupply, "soldout");
         // 验证单钱包最大可 mint 数的正确
         require(
-            walletMints[msg.sender] + quantity_ <= maxPeerWallet,
+            walletMints[msg.sender] + quantity_ <= maxPerWallet,
             "exceed max wallet"
         );
 
-        for (uint256i = 0; i < quantity_; i++) {
+        for (uint256 i = 0; i < quantity_; i++) {
             uint256 newTokenid = totalSupply + 1;
             // 先增加数量后mint，减少重入攻击，宁可减少可 mint 数量，也不要过多的 mint
             totalSupply++;
-            safeMint(msg.sender, newTokenId);
+            _safeMint(msg.sender, newTokenid);
         }
     }
 }
